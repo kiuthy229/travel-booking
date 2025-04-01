@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Row,
@@ -12,6 +12,20 @@ import {
 import '../styles/checkout.css';
 
 const Checkout = () => {
+  const [paymentMethod, setPaymentMethod] = useState('');
+
+  const handlePaymentChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleCheckout = () => {
+    if (!paymentMethod) {
+      alert('Please select a payment method.');
+      return;
+    }
+    alert(`You selected ${paymentMethod} as your payment method.`);
+  };
+
   return (
     <section className='checkout'>
       <Container>
@@ -63,7 +77,50 @@ const Checkout = () => {
                   Total: <span>$220</span>
                 </h4>
               </div>
-              <Button color='primary' className='checkout__btn'>
+              {/* <Button color='primary' className='checkout__btn'>
+                Proceed to Payment
+              </Button> */}
+              <div className='checkout__options'>
+                <h4>Select Payment Method</h4>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type='radio'
+                      name='paymentMethod'
+                      value='Credit Card'
+                      onChange={handlePaymentChange}
+                    />
+                    Credit Card
+                  </Label>
+                </FormGroup>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type='radio'
+                      name='paymentMethod'
+                      value='Paypal'
+                      onChange={handlePaymentChange}
+                    />
+                    Paypal
+                  </Label>
+                </FormGroup>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type='radio'
+                      name='paymentMethod'
+                      value='Cash on delivery'
+                      onChange={handlePaymentChange}
+                    />
+                    Cash on delivery
+                  </Label>
+                </FormGroup>
+              </div>
+              <Button
+                color='primary'
+                className='checkout__btn'
+                onClick={handleCheckout}
+              >
                 Proceed to Payment
               </Button>
             </div>
