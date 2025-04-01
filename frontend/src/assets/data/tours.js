@@ -13,6 +13,7 @@ const tours = [
     city: 'London',
     distance: 300,
     price: 99,
+    address: '123 Main St, London',
     maxGroupSize: 10,
     desc: 'this is the description',
     reviews: [
@@ -31,6 +32,7 @@ const tours = [
     city: 'Indonesia',
     distance: 400,
     price: 99,
+    address: '456 Bali Ave, Indonesia',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [
@@ -45,23 +47,11 @@ const tours = [
   },
   {
     id: '03',
-    title: 'Snowy Mountains, Thailand',
-    city: 'Thailand',
-    distance: 500,
-    price: 99,
-    maxGroupSize: 8,
-    desc: 'this is the description',
-    reviews: [],
-    avgRating: 4.5,
-    photo: tourImg03,
-    featured: true,
-  },
-  {
-    id: '04',
     title: 'Beautiful Sunrise, Thailand',
     city: 'Thailand',
     distance: 500,
     price: 99,
+    address: '101 Sunrise Blvd, Thailand',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [
@@ -80,6 +70,7 @@ const tours = [
     city: 'Indonesia',
     distance: 500,
     price: 99,
+    address: '202 Nusa St, Indonesia',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [
@@ -98,6 +89,7 @@ const tours = [
     city: 'Japan',
     distance: 500,
     price: 99,
+    address: '303 Cherry Ln, Japan',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [
@@ -116,6 +108,7 @@ const tours = [
     city: 'France',
     distance: 500,
     price: 99,
+    address: '404 Holmen Dr, France',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [
@@ -134,6 +127,7 @@ const tours = [
     city: 'Thailand',
     distance: 500,
     price: 99,
+    address: '505 Snowy Way, Thailand',
     maxGroupSize: 8,
     desc: 'this is the description',
     reviews: [

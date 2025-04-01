@@ -6,6 +6,7 @@ import TourDetails from '../pages/TourDetails';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
 import SearchResutlList from '../pages/SearchResutlList';
+import Checkout from '../pages/Checkout';
 
 const Routers = () => {
   return (
@@ -17,6 +18,7 @@ const Routers = () => {
       <Route path='/register' element={<Register />} />
       <Route path='/login' element={<Login />} />
       <Route path='/tours/search' element={<SearchResutlList />} />
+      <Route path='/checkout' element={<Checkout />} />
     </Routes>
   );
 };

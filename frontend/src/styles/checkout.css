@@ -1,0 +1,46 @@
+.checkout {
+  padding: 2rem 0;
+}
+
+.checkout__title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--heading-color);
+}
+
+.checkout__form {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkout__form .form-group {
+  margin-bottom: 1rem;
+}
+
+.checkout__summary {
+  background: #f1f1f1;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.checkout__details p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+.checkout__details h4 {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.checkout__btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+}
