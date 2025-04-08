@@ -2,7 +2,7 @@ import User from '../models/User.js';
 import Booking from '../models/Booking.js';
 
 // Get all tours booked by a user
-export const getAllBookingsOfUser = async (req, res) => {
+export const getBookingsOfUser = async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.params.userId }).populate(
       'tourId'

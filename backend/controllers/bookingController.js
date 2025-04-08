@@ -30,7 +30,27 @@ export const createBooking = async (req, res) => {
   }
 };
 
-export const getSingleBookingInfo = async (req, res) => {
+export const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({});
+
+    res.status(200).json({
+      success: true,
+      message: 'Successfully retrieve all bookings',
+      data: bookings,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: 'Cannot retrieve all bookings information',
+        error: err.message,
+      });
+  }
+};
+
+export const getSingleBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.bookingId).populate(
       'tourId'

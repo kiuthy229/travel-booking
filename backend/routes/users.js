@@ -5,7 +5,7 @@ import {
   deleteUser,
   updateUser,
   searchUsers,
-  getAllBookingsOfUser,
+  getBookingsOfUser,
 } from '../controllers/userController.js';
 import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
@@ -27,6 +27,6 @@ router.patch('/:userId', verifyUser, updateUser);
 router.get('/search', verifyAdmin, searchUsers);
 
 //Get bookings of user
-router.get('/:userId/bookings', verifyUser, getAllBookingsOfUser);
+router.get('/:userId/bookings', verifyUser, getBookingsOfUser);
 
 export default router;

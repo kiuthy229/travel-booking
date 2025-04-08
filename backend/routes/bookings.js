@@ -1,15 +1,17 @@
 import express from 'express';
 import {
   createBooking,
-  getSingleBookingInfo,
   cancelBooking,
+  getSingleBooking,
+  getAllBookings,
 } from '../controllers/bookingController.js';
-import { verifyUser } from '../utils/verifyToken.js';
+import { verifyAdmin, verifyUser } from '../utils/verifyToken.js';
 
 const router = express.Router();
 
 router.post('/', verifyUser, createBooking);
-router.get('/:bookingId', verifyUser, getSingleBookingInfo);
+router.get('/', verifyAdmin, getAllBookings);
+router.get('/:bookingId', verifyUser, getSingleBooking);
 router.delete('/:bookingId', verifyUser, cancelBooking);
 
 export default router;
