@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./" // Set the base directory for resolving module names
+  },
+  "include": ["**/*"], // Include all files in the backend folder
+  "exclude": ["node_modules"] // Exclude the node_modules folder
+}
