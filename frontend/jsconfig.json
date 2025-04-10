@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "checkJs": true,
+    "baseUrl": "./src", // Set the base URL for imports
     "jsx": "react"
-  }
+  },
+  "include": ["src/**/*"] // Include all files in the src directory
 }

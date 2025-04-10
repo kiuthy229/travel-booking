@@ -10,6 +10,7 @@
 
 .menu {
   margin-bottom: 0;
+  margin-right: 2rem; /* Add spacing between menu and nav__right */
 }
 
 .nav__item a {
@@ -25,6 +26,37 @@
 
 .nav__item a.active__link {
   color: var(--secondary-color);
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  gap: 3rem; /* Increase spacing between nav__right items */
+}
+
+.nav__right .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #fff;
+  width: 100%;
+}
+
+.nav__right .btn.primary__btn {
+  background-color: var(--primary-color);
+  border: none;
+  width: 100%;
+}
+
+.nav__right .btn.secondary__btn {
+  background-color: var(--secondary-color);
+  border: none;
+  width: max-content
+}
+
+.nav__right .btn:hover {
+  opacity: 0.9;
 }
 
 .mobile__menu {

@@ -6,9 +6,13 @@
   margin-top: 50px;
 }
 
+form .form__group{
+  margin-bottom: 0 !important;
+}
+
 .form__group span {
   font-size: 1.8rem;
-  color: #ee6e6e;
+  color: #FBA518;
 }
 
 .form__group input {

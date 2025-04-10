@@ -10,7 +10,7 @@
 
 .register__form {
   padding: 50px;
-  background: var(--secondary-color);
+  background: var(--primary-color);
   position: relative;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .register__form {
-  width: 40%;
+  width: 50%;
 }
 
 .register__form input {
@@ -53,6 +53,7 @@
 
 .register__form input:focus {
   outline: none;
+  color: var(--heading-color);
 }
 
 .auth__btn {
@@ -63,7 +64,7 @@
 
 .register__form p {
   font-size: 0.9rem;
-  color: #fff;
+  color: #D68060;
   margin-top: 1.5rem;
   text-align: center;
 }

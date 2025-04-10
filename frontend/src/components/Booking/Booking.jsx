@@ -22,8 +22,6 @@ const Booking = ({ tour, avgRating }) => {
 
   const handleClick = (e) => {
     e.preventDefault();
-
-    console.log(credentials);
     navigate('/checkout');
   };
 
@@ -73,6 +71,8 @@ const Booking = ({ tour, avgRating }) => {
               required
               onChange={handleChange}
             />
+          </FormGroup>
+          <FormGroup>
             <input
               type='number'
               placeholder='Guests'
@@ -89,7 +89,8 @@ const Booking = ({ tour, avgRating }) => {
         <ListGroup>
           <ListGroupItem className='border-0 px-0'>
             <h5 className='d-flex align-items-center gap-1'>
-              ${price} <i className='ri-close-line'> 1 person</i>
+              ${price} <i className='ri-close-line'></i>
+              <span>1 person</span>
             </h5>
             <span>${price}</span>
           </ListGroupItem>

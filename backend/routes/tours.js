@@ -16,10 +16,10 @@ const router = express.Router();
 router.post('/', verifyAdmin, createTour);
 
 // Get all tours
-router.get('/', verifyUser, getAllTours);
+router.get('/', getAllTours);
 
 // Get a single tour by ID
-router.get('/:tourId', verifyUser, getTourById);
+router.get('/:tourId', getTourById);
 
 // Update a tour
 router.patch('/:tourId', verifyAdmin, updateTour);
@@ -28,7 +28,7 @@ router.patch('/:tourId', verifyAdmin, updateTour);
 router.delete('/:tourId', verifyAdmin, deleteTour);
 
 // Get featured tours only
-router.get('/s/featured', verifyUser, getFeaturedTours);
+router.get('/s/featured', getFeaturedTours);
 
 // Create a review for a tour
 router.post('/:tourId/reviews', verifyUser, createReview);

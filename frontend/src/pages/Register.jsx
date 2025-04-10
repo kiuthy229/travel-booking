@@ -11,30 +11,61 @@ import {
 } from 'reactstrap';
 import registerImg from '../assets/images/register.png';
 import userIcon from '../assets/images/user.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/register.css';
+import { BASE_URL } from '../utils/config';
 
 const Register = () => {
   const [credentials, setCredentials] = useState({
-    username: undefined,
-    email: undefined,
-    password: undefined,
-    confirmPassword: undefined,
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     e.preventDefault();
+
+    if (credentials.password !== credentials.confirmPassword) {
+      return alert('Passwords do not match');
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: credentials.username,
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Registration successful!');
+        navigate('/login');
+      } else {
+        alert(result.message);
+      }
+    } catch (err) {
+      alert('Registration failed. Please try again.');
+    }
   };
 
   return (
     <section className='register'>
       <Container>
         <Row>
-          <Col lg='8' className='m-auto'>
+          <Col lg='10' className='m-auto'>
             <div className='register__container d-flex justify-content-between'>
               <div className='register__img'>
                 <img src={registerImg} alt='' />
@@ -79,7 +110,7 @@ const Register = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label for='password'>Confirm Password</Label>
+                    <Label for='confirmPassword'>Confirm Password</Label>
                     <Input
                       type='password'
                       id='confirmPassword'

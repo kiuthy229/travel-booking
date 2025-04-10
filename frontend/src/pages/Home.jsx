@@ -22,6 +22,9 @@ const Home = () => {
       <section>
         <Container>
           <Row>
+            <SearchBar />
+          </Row>
+          <Row>
             <Col lg='6'>
               <div className='hero__content'>
                 <Subtitle subtitle='Know Before You Go' />
@@ -54,8 +57,6 @@ const Home = () => {
                 <img src={heroImg02} alt='' />
               </div>
             </Col>
-
-            <SearchBar />
           </Row>
         </Container>
       </section>

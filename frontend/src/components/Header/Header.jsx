@@ -39,7 +39,7 @@ const Header = () => {
   useEffect(() => {
     stickyHeaderFunc();
 
-    return window.removeEventListener('scroll', stickyHeaderFunc );
+    return window.removeEventListener('scroll', stickyHeaderFunc);
   }, []);
 
   return (
@@ -53,7 +53,7 @@ const Header = () => {
             <div className='navigation'>
               <ul className='menu d-flex align-items-center gap-5'>
                 {nav_links.map((item, index) => (
-                  <li className='nav__item'>
+                  <li className='nav__item' key={index}>
                     <NavLink
                       to={item.path}
                       className={(navClass) =>
@@ -71,7 +71,7 @@ const Header = () => {
                 <Button className='btn secondary__btn'>
                   <Link to='/login'>Login</Link>
                 </Button>
-                <Button className='btn primary__btn'>
+                <Button className='btn primary__btn w-auto'>
                   <Link to='/register'>Sign up</Link>
                 </Button>
               </div>

@@ -1,18 +1,57 @@
 import React, { useRef, useState } from 'react';
-import { Container, Row, Col, Form, ListGroup } from 'reactstrap';
+import { Container, Row, Col, Form, ListGroup, Spinner } from 'reactstrap';
 import { useParams } from 'react-router-dom';
-import tourData from '../assets/data/tours';
-import calculateAvgRating from '../utils/avgRating';
 import '../styles/tour-details.css';
 import avatar from '../assets/images/avatar.jpg';
 import Booking from '../components/Booking/Booking';
+import useFetch from '../hooks/useFetch';
+import { BASE_URL } from '../utils/config';
+import StarRating from '../components/StarRating/StarRating';
 
 const TourDetails = () => {
   const { id } = useParams();
   const reviewMsgRef = useRef('');
   const [tourRating, setTourRating] = useState(null);
 
-  const tour = tourData.find((tour) => tour.id === id);
+  const { data: tour, loading, error } = useFetch(`${BASE_URL}/tours/${id}`);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const reviewText = reviewMsgRef.current.value;
+
+    const reviewData = {
+      userId: '01', // Replace with actual user ID from auth context
+      username: 'John Doe', // Replace with actual username from auth context
+      rating: tourRating,
+      reviewText,
+    };
+
+    try {
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const response = await fetch(`${BASE_URL}/tours/${id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Review submitted successfully!');
+        window.location.reload();
+      } else {
+        alert(result.message);
+      }
+    } catch (err) {
+      alert('Failed to submit review. Please try again.');
+    }
+  };
+
+  if (loading) return <Spinner color='primary' />;
+  if (error) return <p className='text-danger'>Failed to load tour: {error}</p>;
 
   const {
     photo,
@@ -24,9 +63,8 @@ const TourDetails = () => {
     city,
     distance,
     maxGroupSize,
+    avgRating,
   } = tour;
-
-  const { totalRating, avgRating } = calculateAvgRating(reviews);
 
   const options = {
     day: 'numeric',
@@ -34,12 +72,6 @@ const TourDetails = () => {
     year: 'numeric',
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    const reviewText = reviewMsgRef.current.value;
-
-    alert(`${reviewText}, ${tourRating}`);
-  };
   return (
     <>
       <section>
@@ -59,7 +91,7 @@ const TourDetails = () => {
                         style={{ color: 'var(--secondary-color)' }}
                       ></i>
                       {avgRating === 0 ? null : avgRating}
-                      {totalRating === 0 ? (
+                      {reviews?.length === 0 ? (
                         'Not rated'
                       ) : (
                         <span>{reviews.length}</span>
@@ -97,29 +129,13 @@ const TourDetails = () => {
                   <h4>Reviews ({reviews?.length} reviews)</h4>
 
                   <Form onSubmit={submitHandler}>
-                    <div className='d-flex align-items-center gap-3 mb-4 rating__group'>
-                      <span onClick={() => setTourRating(1)}>
-                        1 <i className='ri-star-s-fill'></i>
-                      </span>
-                      <span onClick={() => setTourRating(2)}>
-                        2 <i className='ri-star-s-fill'></i>
-                      </span>
-                      <span onClick={() => setTourRating(3)}>
-                        3<i className='ri-star-s-fill'></i>
-                      </span>
-                      <span onClick={() => setTourRating(4)}>
-                        4<i className='ri-star-s-fill'></i>
-                      </span>
-                      <span onClick={() => setTourRating(5)}>
-                        5<i className='ri-star-s-fill'></i>
-                      </span>
-                    </div>
+                    <StarRating rating={tourRating} setRating={setTourRating} />
 
                     <div className='review__input'>
                       <input
                         type='text'
                         ref={reviewMsgRef}
-                        placeholder='share your thoughts'
+                        placeholder='Share your thoughts'
                         required
                       />
                       <button
@@ -132,27 +148,28 @@ const TourDetails = () => {
                   </Form>
 
                   <ListGroup className='user__review'>
-                    {reviews?.map((review) => (
-                      <div className='review__item'>
+                    {reviews?.map((review, index) => (
+                      <div className='review__item' key={index}>
                         <img src={avatar} alt='' />
 
                         <div className='w-100'>
                           <div className='d-flex align-items-center justify-content-between'>
                             <div>
-                              <h5>sgdsfg</h5>
+                              <h5>{review.username}</h5>
                               <p>
-                                {new Date('01-18-2023').toLocaleDateString(
+                                {new Date(review.createdAt).toLocaleDateString(
                                   'en-US',
                                   options
                                 )}
                               </p>
                             </div>
                             <span className='d-flex align-items-center'>
-                              5<i className='ri-star-s-fill'></i>
+                              {review.rating}
+                              <i className='ri-star-s-fill'></i>
                             </span>
                           </div>
 
-                          <h6>Amazing tour</h6>
+                          <h6>{review.reviewText}</h6>
                         </div>
                       </div>
                     ))}

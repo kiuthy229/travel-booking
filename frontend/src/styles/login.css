@@ -10,7 +10,7 @@
 
 .login__form {
   padding: 50px;
-  background: var(--secondary-color);
+  background: var(--primary-color);
   position: relative;
 }
 
@@ -53,10 +53,11 @@
 
 .login__form input:focus {
   outline: none;
+  color: var(--heading-color);
 }
 
 .auth__btn {
-  background: var(--heading-color) !important;
+  background: var(--secondary-color) !important;
   width: 100%;
   color: #fff !important;
 }
@@ -66,10 +67,11 @@
   color: #fff;
   margin-top: 1.5rem;
   text-align: center;
+  color: #D68060
 }
 
 .login__form p a {
-  color: var(--heading-color);
+  color: var(--secondary-color);
   text-decoration: none;
   margin-left: 5px;
   font-weight: 500;

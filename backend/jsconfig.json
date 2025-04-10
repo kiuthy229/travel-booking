@@ -1,7 +1,16 @@
 {
   "compilerOptions": {
-    "baseUrl": "./" // Set the base directory for resolving module names
+    "baseUrl": "./", // Set the base URL to the current directory
+    "paths": {
+      "../models/*": ["models/*"], // Alias for models folder
+      "../controllers/*": ["controllers/*"], // Alias for controllers folder
+      "../routes/*": ["routes/*"], // Alias for routes folder
+      "../utils/*": ["utils/*"] // Alias for utils folder
+    }
   },
-  "include": ["**/*"], // Include all files in the backend folder
-  "exclude": ["node_modules"] // Exclude the node_modules folder
+  "exclude": [
+    "node_modules", // Exclude the node_modules folder
+    "dist", // Exclude the dist folder if using a build process
+    "coverage" // Exclude coverage reports if using a testing tool
+  ]
 }

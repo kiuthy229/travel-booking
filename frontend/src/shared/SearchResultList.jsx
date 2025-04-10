@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import CommonSection from '../shared/CommonSection';
-import '../styles/tours.css';
 import TourCard from '../shared/TourCard';
-import Newsletter from '../shared/Newsletter';
-import { Row, Col, Container, Spinner } from 'reactstrap';
+import { Col, Container, Row, Spinner } from 'reactstrap';
 import { useLocation } from 'react-router-dom';
 import { BASE_URL } from '../utils/config';
-import SearchBar from '../shared/SearchBar';
+import Newsletter from './Newsletter';
 
-const Tours = () => {
+const SearchResultList = () => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,17 +38,8 @@ const Tours = () => {
 
   return (
     <>
-      <CommonSection title={'All Tours'} />
-
+      <CommonSection title={'Tour Search Results.'} />
       <section>
-        <Container>
-          <Row>
-            <SearchBar setTours={setTours} />
-          </Row>
-        </Container>
-      </section>
-
-      <section className='pt-0'>
         <Container>
           <Row>
             {loading && <Spinner color='primary' />}
@@ -60,17 +49,23 @@ const Tours = () => {
             {!loading &&
               !error &&
               tours?.map((tour) => (
-                <Col lg='3' className='mb-4' key={tour._id}>
+                <Col lg='3' md='4' sm='6' className='mb-4' key={tour._id}>
                   <TourCard tour={tour} />
                 </Col>
               ))}
+            {!loading && !error && tours.length === 0 && (
+              <Col>
+                <h5 className='text-center'>
+                  No tours found. Try adjusting your search criteria.
+                </h5>
+              </Col>
+            )}
           </Row>
         </Container>
+        <Newsletter />
       </section>
-
-      <Newsletter />
     </>
   );
 };
 
-export default Tours;
+export default SearchResultList;

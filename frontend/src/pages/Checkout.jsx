@@ -3,127 +3,82 @@ import {
   Container,
   Row,
   Col,
+  Button,
   Form,
   FormGroup,
-  Label,
   Input,
-  Button,
 } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
 import '../styles/checkout.css';
 
 const Checkout = () => {
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('paypal');
+  const navigate = useNavigate();
 
-  const handlePaymentChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-
-  const handleCheckout = () => {
-    if (!paymentMethod) {
-      alert('Please select a payment method.');
-      return;
+  const handlePayment = () => {
+    if (paymentMethod === 'paypal') {
+      alert('Redirecting to PayPal...');
+      // Implement PayPal integration here
+    } else if (paymentMethod === 'creditCard') {
+      alert('Processing credit card payment...');
+      // Implement credit card payment processing here
+    } else if (paymentMethod === 'deposit') {
+      alert('Deposit payment confirmed.');
+      // Implement deposit payment logic here
     }
-    alert(`You selected ${paymentMethod} as your payment method.`);
+    navigate('/thank-you');
   };
 
   return (
     <section className='checkout'>
       <Container>
         <Row>
-          <Col lg='8'>
-            <h2 className='checkout__title'>Billing Information</h2>
-            <Form className='checkout__form'>
+          <Col lg='8' className='m-auto'>
+            <h2 className='checkout__title'>Checkout</h2>
+            <Form>
               <FormGroup>
-                <Label for='fullName'>Full Name</Label>
-                <Input
-                  type='text'
-                  id='fullName'
-                  placeholder='Enter your full name'
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for='email'>Email</Label>
-                <Input type='email' id='email' placeholder='Enter your email' />
-              </FormGroup>
-              <FormGroup>
-                <Label for='phone'>Phone</Label>
-                <Input
-                  type='text'
-                  id='phone'
-                  placeholder='Enter your phone number'
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for='address'>Address</Label>
-                <Input
-                  type='text'
-                  id='address'
-                  placeholder='Enter your address'
-                />
-              </FormGroup>
-            </Form>
-          </Col>
-          <Col lg='4'>
-            <div className='checkout__summary'>
-              <h2 className='checkout__title'>Order Summary</h2>
-              <div className='checkout__details'>
-                <p>
-                  Subtotal: <span>$200</span>
-                </p>
-                <p>
-                  Taxes: <span>$20</span>
-                </p>
-                <h4>
-                  Total: <span>$220</span>
-                </h4>
-              </div>
-              {/* <Button color='primary' className='checkout__btn'>
-                Proceed to Payment
-              </Button> */}
-              <div className='checkout__options'>
-                <h4>Select Payment Method</h4>
-                <FormGroup check>
-                  <Label check>
+                <h5>Select Payment Method</h5>
+                <div className='payment__options'>
+                  <label>
                     <Input
                       type='radio'
                       name='paymentMethod'
-                      value='Credit Card'
-                      onChange={handlePaymentChange}
+                      value='paypal'
+                      checked={paymentMethod === 'paypal'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    PayPal
+                  </label>
+                  <label>
+                    <Input
+                      type='radio'
+                      name='paymentMethod'
+                      value='creditCard'
+                      checked={paymentMethod === 'creditCard'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
                     Credit Card
-                  </Label>
-                </FormGroup>
-                <FormGroup check>
-                  <Label check>
+                  </label>
+                  <label>
                     <Input
                       type='radio'
                       name='paymentMethod'
-                      value='Paypal'
-                      onChange={handlePaymentChange}
+                      value='deposit'
+                      checked={paymentMethod === 'deposit'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
-                    Paypal
-                  </Label>
-                </FormGroup>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      type='radio'
-                      name='paymentMethod'
-                      value='Cash on delivery'
-                      onChange={handlePaymentChange}
-                    />
-                    Cash on delivery
-                  </Label>
-                </FormGroup>
-              </div>
+                    Deposit
+                  </label>
+                </div>
+              </FormGroup>
               <Button
                 color='primary'
-                className='checkout__btn'
-                onClick={handleCheckout}
+                className='btn primary__btn w-100 mt-4'
+                onClick={handlePayment}
               >
-                Proceed to Payment
+                Confirm Payment
               </Button>
-            </div>
+            </Form>
           </Col>
         </Row>
       </Container>
