@@ -28,15 +28,20 @@ const verifyToken = (req, res, next) => {
 };
 
 export const verifyUser = (req, res, next) => {
-  verifyToken(req, res, next, () => {
-    if (req.user.id === req.params.id || req.user.role === 'admin') {
-      next();
-    } else {
-      return res
-        .status(403)
-        .json({ success: false, message: 'Access denied.' });
-    }
-  });
+  const token =
+    req.body.access_token || req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(403).json({ success: false, message: 'Access Denied: No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ success: false, message: 'Invalid token' });
+  }
 };
 
 export const verifyAdmin = (req, res, next) => {

@@ -18,13 +18,13 @@ const SearchBar = () => {
   };
   return (
     <Col lg='12'>
-      <div className='search__bar'>
-        <Form className='d-flex align-items-center gap-4'>
+      <div className='search__container'>
+        <Form className='search__bar d-flex align-items-center gap-4'>
           <FormGroup className='d-flex gap-3 form__group form__group-fast'>
             <span>
               <i className='ri-map-pin-line'></i>
             </span>
-            <div>
+            <div className='element__search'>
               <h6>Location</h6>
               <input
                 type='text'
@@ -38,7 +38,7 @@ const SearchBar = () => {
             <span>
               <i className='ri-map-pin-time-line'></i>
             </span>
-            <div>
+            <div className='element__search'>
               <h6>Distance</h6>
               <input
                 type='number'
@@ -52,7 +52,7 @@ const SearchBar = () => {
             <span>
               <i className='ri-group-line'></i>
             </span>
-            <div>
+            <div className='element__search'>
               <h6>Max People</h6>
               <input type='number' placeholder='0' ref={maxGroupSizeRef} />
             </div>
@@ -60,6 +60,7 @@ const SearchBar = () => {
 
           <span className='search__icon' type='submit' onClick={searchHandler}>
             <i className='ri-search-line'></i>
+            <span className='d-md-none'>Browse your favorite destinations</span>
           </span>
         </Form>
       </div>

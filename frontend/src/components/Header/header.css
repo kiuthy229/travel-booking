@@ -6,11 +6,19 @@
 
 .logo img {
   width: 30%;
+  min-width: 110px;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 50px;
 }
 
 .menu {
   margin-bottom: 0;
-  margin-right: 2rem; /* Add spacing between menu and nav__right */
 }
 
 .nav__item a {
@@ -29,40 +37,23 @@
 }
 
 .nav__right {
-  display: flex;
-  align-items: center;
-  gap: 3rem; /* Increase spacing between nav__right items */
-}
-
-.nav__right .btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  border-radius: 4px;
-  text-decoration: none;
-  color: #fff;
-  width: 100%;
-}
-
-.nav__right .btn.primary__btn {
-  background-color: var(--primary-color);
-  border: none;
-  width: 100%;
-}
-
-.nav__right .btn.secondary__btn {
-  background-color: var(--secondary-color);
-  border: none;
-  width: max-content
-}
-
-.nav__right .btn:hover {
-  opacity: 0.9;
 }
 
 .mobile__menu {
-  font-size: 1.3rem;
+  font-size: 2rem;
   color: var(--heading-color);
   display: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mobile__menu {
+    display: block;
+  }
+
+  .navigation {
+    display: none;
+  }
 }
 
 .sticky__header {

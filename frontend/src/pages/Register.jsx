@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Button,
   Col,
@@ -14,6 +14,7 @@ import userIcon from '../assets/images/user.png';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/register.css';
 import { BASE_URL } from '../utils/config';
+import { AuthContext } from '../context/AuthContext.js';
 
 const Register = () => {
   const [credentials, setCredentials] = useState({
@@ -22,6 +23,7 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -51,6 +53,7 @@ const Register = () => {
       const result = await response.json();
 
       if (response.ok) {
+        dispatch({ type: 'REGISTER_SUCCESS' });
         alert('Registration successful!');
         navigate('/login');
       } else {

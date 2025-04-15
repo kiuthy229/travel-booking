@@ -1,8 +1,15 @@
-import React, { useRef, useEffect } from 'react';
-import { Container, Row, Button } from 'reactstrap';
+import React, { useRef, useEffect, useContext, useState } from 'react';
+import {
+  Container,
+  Row,
+  Offcanvas,
+  OffcanvasHeader,
+  OffcanvasBody,
+} from 'reactstrap';
 import { NavLink, Link } from 'react-router-dom';
-
+import { AuthContext } from 'context/AuthContext.js';
 import logo from '../../assets/images/logo.png';
+import avatar from '../../assets/images/avatar.jpg';
 import './header.css';
 
 const nav_links = [
@@ -22,6 +29,12 @@ const nav_links = [
 
 const Header = () => {
   const headerRef = useRef(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, dispatch } = useContext(AuthContext);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const stickyHeaderFunc = () => {
     window.addEventListener('scroll', () => {
@@ -38,9 +51,14 @@ const Header = () => {
 
   useEffect(() => {
     stickyHeaderFunc();
-
-    return window.removeEventListener('scroll', stickyHeaderFunc);
+    return () => window.removeEventListener('scroll', stickyHeaderFunc);
   }, []);
+
+  const handleLogout = () => {
+    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  };
 
   return (
     <header className='header' ref={headerRef}>
@@ -50,7 +68,7 @@ const Header = () => {
             <div className='logo'>
               <img src={logo} alt='Logo' />
             </div>
-            <div className='navigation'>
+            <div className='d-none d-md-flex navigation'>
               <ul className='menu d-flex align-items-center gap-5'>
                 {nav_links.map((item, index) => (
                   <li className='nav__item' key={index}>
@@ -65,23 +83,74 @@ const Header = () => {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div className='nav__right d-flex align-items-center gap-4'>
-              <div className='nav__btns d-flex align-items-center gap-4'>
-                <Button className='btn secondary__btn'>
-                  <Link to='/login'>Login</Link>
-                </Button>
-                <Button className='btn primary__btn w-auto'>
-                  <Link to='/register'>Sign up</Link>
-                </Button>
+              <div className='nav__right d-flex align-items-center gap-4'>
+                {user ? (
+                  <div className='d-flex align-items-center gap-3'>
+                    <div className='d-flex align-items-center gap-1'>
+                      <img
+                        src={user.photo || avatar}
+                        alt='User Avatar'
+                        className='user__avatar'
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                        }}
+                      />
+                      <span className='user__name'>{user.username}</span>
+                    </div>
+                    <button
+                      className='btn secondary__btn'
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className='nav__btns d-flex align-items-center gap-4'>
+                    <Link to='/login' className='btn secondary__btn'>
+                      Login
+                    </Link>
+                    <Link
+                      to='/register'
+                      className='btn primary__btn text-nowrap'
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
               </div>
-              <span className='mobile__menu'>
-                <i className='ri-menu-line'></i>
-              </span>
             </div>
+            <span className='mobile__menu d-md-none' onClick={toggleMobileMenu}>
+              <i className='ri-menu-line'></i>
+            </span>
           </div>
         </Row>
       </Container>
+      <Offcanvas
+        isOpen={isMobileMenuOpen}
+        toggle={toggleMobileMenu}
+        direction='start'
+      >
+        <OffcanvasHeader toggle={toggleMobileMenu}>Menu</OffcanvasHeader>
+        <OffcanvasBody>
+          <ul className='menu d-flex flex-column gap-3'>
+            {nav_links.map((item, index) => (
+              <li className='nav__item' key={index}>
+                <NavLink
+                  to={item.path}
+                  className={(navClass) =>
+                    navClass.isActive ? 'active__link' : ''
+                  }
+                  onClick={toggleMobileMenu}
+                >
+                  {item.display}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </OffcanvasBody>
+      </Offcanvas>
     </header>
   );
 };

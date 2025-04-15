@@ -1,28 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './booking.css';
 import { Form, FormGroup, ListGroup, ListGroupItem, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 
-const Booking = ({ tour, avgRating }) => {
+const Booking = ({
+  tour,
+  avgRating,
+  credentials,
+  setCredentials,
+  handleBookNow,
+}) => {
   const { price, reviews } = tour;
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({
-    userId: '01',
-    userEmail: 'example@gmail.com',
-    fullName: '',
-    phone: '',
-    guestSize: 1,
-    bookAt: '',
-  });
-
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-  };
-
-  const handleClick = (e) => {
-    e.preventDefault();
-    navigate('/checkout');
   };
 
   const serviceFee = 10;
@@ -44,7 +36,7 @@ const Booking = ({ tour, avgRating }) => {
       {/* Booking form */}
       <div className='booking__form'>
         <h5>Information</h5>
-        <Form className='booking__info-form' onSubmit={handleClick}>
+        <Form className='booking__info-form' onSubmit={handleBookNow}>
           <FormGroup>
             <input
               type='text'
@@ -67,6 +59,7 @@ const Booking = ({ tour, avgRating }) => {
             <input
               type='date'
               placeholder=''
+              defaultValue={new Date().toISOString().split('T')[0]}
               id='bookAt'
               required
               onChange={handleChange}
@@ -77,6 +70,7 @@ const Booking = ({ tour, avgRating }) => {
               type='number'
               placeholder='Guests'
               id='guestSize'
+              min='1'
               required
               onChange={handleChange}
             />
@@ -104,7 +98,7 @@ const Booking = ({ tour, avgRating }) => {
           </ListGroupItem>
         </ListGroup>
 
-        <Button className='btn primary__btn w-100 mt-4' onClick={handleClick}>
+        <Button className='btn primary__btn w-100 mt-4' onClick={handleBookNow}>
           Book Now
         </Button>
       </div>

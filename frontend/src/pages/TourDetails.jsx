@@ -1,6 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { Container, Row, Col, Form, ListGroup, Spinner } from 'reactstrap';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  ListGroup,
+  Spinner,
+  Button,
+} from 'reactstrap';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/tour-details.css';
 import avatar from '../assets/images/avatar.jpg';
 import Booking from '../components/Booking/Booking';
@@ -10,8 +18,19 @@ import StarRating from '../components/StarRating/StarRating';
 
 const TourDetails = () => {
   const { id } = useParams();
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const navigate = useNavigate();
   const reviewMsgRef = useRef('');
   const [tourRating, setTourRating] = useState(null);
+  const [credentials, setCredentials] = useState({
+    userId: user.id || '',
+    userEmail: user.email || '',
+    fullName: '',
+    phone: '',
+    guestSize: 1,
+    bookAt: new Date().toISOString().split('T')[0],
+  });
 
   const { data: tour, loading, error } = useFetch(`${BASE_URL}/tours/${id}`);
 
@@ -20,8 +39,8 @@ const TourDetails = () => {
     const reviewText = reviewMsgRef.current.value;
 
     const reviewData = {
-      userId: '01', // Replace with actual user ID from auth context
-      username: 'John Doe', // Replace with actual username from auth context
+      userId: user.id,
+      username: user.username,
       rating: tourRating,
       reviewText,
     };
@@ -49,6 +68,22 @@ const TourDetails = () => {
       alert('Failed to submit review. Please try again.');
     }
   };
+
+  const handleBookNow = () => {
+    navigate('/checkout', {
+      state: {
+        tourId: id,
+        title: tour.title,
+        price: tour.price,
+        guestSize: credentials.guestSize,
+        date: credentials.bookAt,
+      },
+    });
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [tour]);
 
   if (loading) return <Spinner color='primary' />;
   if (error) return <p className='text-danger'>Failed to load tour: {error}</p>;
@@ -179,7 +214,13 @@ const TourDetails = () => {
             </Col>
 
             <Col lg='4'>
-              <Booking tour={tour} avgRating={avgRating} />
+              <Booking
+                tour={tour}
+                avgRating={avgRating}
+                credentials={credentials}
+                setCredentials={setCredentials}
+                handleBookNow={handleBookNow}
+              />
             </Col>
           </Row>
         </Container>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Container,
   Row,
@@ -14,12 +14,14 @@ import '../styles/login.css';
 import loginImg from '../assets/images/login.png';
 import userIcon from '../assets/images/user.png';
 import { BASE_URL } from '../utils/config';
+import { AuthContext } from 'context/AuthContext.js';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
   });
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,6 +30,8 @@ const Login = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+
+    dispatch({ type: 'LOGIN_START' });
 
     try {
       const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -41,13 +45,16 @@ const Login = () => {
       const result = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', result.data.token);
+        dispatch({ type: 'LOGIN_SUCCESS', payload: result.data });
+        localStorage.setItem('token', result.token);
         alert('Login successful!');
         navigate('/');
       } else {
+        dispatch({ type: 'LOGIN_FAILED', payload: result.message });
         alert(result.message);
       }
     } catch (err) {
+      dispatch({ type: 'LOGIN_FAILED', payload: 'Something went wrong' });
       alert('Login failed. Please try again.');
     }
   };

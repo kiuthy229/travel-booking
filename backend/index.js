@@ -7,6 +7,7 @@ import authRoute from './routes/auth.js';
 import tourRoute from './routes/tours.js';
 import userRoute from './routes/users.js';
 import bookingRoute from './routes/bookings.js';
+import paymentRoute from './routes/payments.js';
 import { connectDatabase } from './utils/database.js';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/tours', tourRoute);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/bookings', bookingRoute);
+app.use('/api/v1/payments', paymentRoute);
 
 // Start the server
 app.listen(PORT, () => {
