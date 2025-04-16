@@ -117,6 +117,31 @@ export const getTourById = async (req, res) => {
   }
 };
 
+// Get reviews for a specific tour
+export const getTourReviews = async (req, res) => {
+  const { tourId } = req.params;
+
+  try {
+    const tour = await Tour.findById(tourId).populate('reviews');
+    if (!tour) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Tour not found' });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Reviews retrieved successfully',
+      data: tour.reviews,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve reviews',
+      error: err.message,
+    });
+  }
+};
+
 // Update a tour
 export const updateTour = async (req, res) => {
   const { tourId } = req.params;
