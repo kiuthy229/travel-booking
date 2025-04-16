@@ -13,8 +13,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import loginImg from '../assets/images/login.png';
 import userIcon from '../assets/images/user.png';
-import { BASE_URL } from '../utils/config';
 import { AuthContext } from 'context/AuthContext.js';
+import apiClient from '../utils/api';
+import { useMutation } from 'react-query';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -23,40 +24,32 @@ const Login = () => {
   });
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const mutation = useMutation(
+    (userCredentials) => apiClient.post('/auth/login', userCredentials, token),
+    {
+      onSuccess: ({ data }) => {
+        dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+        localStorage.setItem('token', data.token);
+        alert('Login successful!');
+        navigate('/');
+      },
+      onError: () => {
+        dispatch({ type: 'LOGIN_FAILED', payload: 'Something went wrong' });
+        alert('Login failed. Please try again.');
+      },
+    }
+  );
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault();
-
     dispatch({ type: 'LOGIN_START' });
-
-    try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        dispatch({ type: 'LOGIN_SUCCESS', payload: result.data });
-        localStorage.setItem('token', result.token);
-        alert('Login successful!');
-        navigate('/');
-      } else {
-        dispatch({ type: 'LOGIN_FAILED', payload: result.message });
-        alert(result.message);
-      }
-    } catch (err) {
-      dispatch({ type: 'LOGIN_FAILED', payload: 'Something went wrong' });
-      alert('Login failed. Please try again.');
-    }
+    mutation.mutate(credentials);
   };
 
   return (
@@ -101,8 +94,9 @@ const Login = () => {
                     color='primary'
                     className='btn secondary__btn auth__btn'
                     type='submit'
+                    disabled={mutation.isLoading}
                   >
-                    Login
+                    {mutation.isLoading ? 'Logging in...' : 'Login'}
                   </Button>
                 </Form>
                 <p>

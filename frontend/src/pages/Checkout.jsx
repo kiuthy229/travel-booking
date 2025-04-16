@@ -10,13 +10,11 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { BASE_URL } from '../utils/config';
+import { useMutation } from 'react-query';
 import '../styles/checkout.css';
+import apiClient from '../utils/api';
 
-const stripePromise = loadStripe(
-  process.env.STRIPE_SECRET_KEY ||
-    'pk_test_51RDzqvRu7ZqiiK5zd2lHzxZ1RnER21kCrNzdYho3oaLHjXnz0xGtaSzpr9Fa0RFciN4men8KgNPuod3lK6idco9h001yVaPQAK'
-);
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const useOptions = () => {
   const options = useMemo(
@@ -127,49 +125,47 @@ const Checkout = () => {
   const { tourId, title, price, guestSize, date } = location.state || {};
   const [paymentMethodId, setPaymentMethodId] = useState(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
-  const handlePayment = async () => {
+  const mutation = useMutation(
+    async () => {
+      const userString = localStorage.getItem('user');
+      const userId = userString ? JSON.parse(userString)._id : null;
+
+      if (!userId) {
+        throw new Error('User not logged in.');
+      }
+
+      await apiClient.post(
+        '/payments',
+        {
+          userId,
+          bookingId: tourId,
+          amount: price * guestSize + 10,
+          currency: 'usd',
+          paymentMethodId,
+        },
+        token
+      );
+    },
+    {
+      onSuccess: () => {
+        alert('Payment successful!');
+        navigate('/thank-you');
+      },
+      onError: () => {
+        alert('Payment failed. Please try again.');
+      },
+    }
+  );
+
+  const handlePayment = () => {
     if (!paymentMethodId) {
       alert('Please create a payment method first.');
       return;
     }
 
-    try {
-      const token = localStorage.getItem('token'); // Retrieve token from localStorage
-      const userString = localStorage.getItem('user'); // Retrieve user object from localStorage
-      const userId = userString ? JSON.parse(userString)._id : null; // Parse and extract user ID
-
-      if (!userId) {
-        alert('User not logged in.');
-        return;
-      }
-
-      const response = await fetch(`${BASE_URL}/payments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: userId,
-          bookingId: tourId,
-          amount: price * guestSize + 10,
-          currency: 'usd',
-          paymentMethodId: paymentMethodId,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert('Payment successful!');
-        navigate('/thank-you');
-      } else {
-        alert(result.message);
-      }
-    } catch (err) {
-      alert('Payment failed. Please try again.');
-    }
+    mutation.mutate();
   };
 
   return (
@@ -200,9 +196,9 @@ const Checkout = () => {
               color='primary'
               className='btn primary__btn w-100 mt-4'
               onClick={handlePayment}
-              disabled={!paymentMethodId}
+              disabled={!paymentMethodId || mutation.isLoading}
             >
-              Confirm Payment
+              {mutation.isLoading ? 'Processing...' : 'Confirm Payment'}
             </Button>
           </Col>
         </Row>

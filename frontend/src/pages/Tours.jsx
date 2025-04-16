@@ -1,42 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import CommonSection from '../shared/CommonSection';
 import '../styles/tours.css';
 import TourCard from '../shared/TourCard';
 import Newsletter from '../shared/Newsletter';
 import { Row, Col, Container, Spinner } from 'reactstrap';
 import { useLocation } from 'react-router-dom';
-import { BASE_URL } from '../utils/config';
 import SearchBar from '../shared/SearchBar';
+import apiClient from '../utils/api';
+import { useQuery } from 'react-query';
+
+const fetchTours = async (search) => {
+  const {
+    data: { data },
+  } = await apiClient.get(`/tours${search}`);
+  return data;
+};
 
 const Tours = () => {
-  const [tours, setTours] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const location = useLocation();
-
-  useEffect(() => {
-    const fetchTours = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(`${BASE_URL}/tours${location.search}`);
-        const result = await response.json();
-
-        if (response.ok) {
-          setTours(result.data);
-        } else {
-          setError(result.message);
-        }
-      } catch (err) {
-        setError('Failed to fetch tours. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTours();
-  }, [location.search]);
+  const {
+    data: tours,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(['tours', location.search], () => fetchTours(location.search));
 
   return (
     <>
@@ -45,7 +32,7 @@ const Tours = () => {
       <section>
         <Container>
           <Row>
-            <SearchBar setTours={setTours} />
+            <SearchBar />
           </Row>
         </Container>
       </section>
@@ -53,12 +40,14 @@ const Tours = () => {
       <section className='pt-0'>
         <Container>
           <Row>
-            {loading && <Spinner color='primary' />}
-            {error && (
-              <p className='text-danger'>Failed to load tours: {error}</p>
+            {isLoading && <Spinner color='primary' />}
+            {isError && (
+              <p className='text-danger'>
+                Failed to load tours: {error.message}
+              </p>
             )}
-            {!loading &&
-              !error &&
+            {!isLoading &&
+              !isError &&
               tours?.map((tour) => (
                 <Col lg='3' className='mb-4' key={tour._id}>
                   <TourCard tour={tour} />

@@ -13,8 +13,9 @@ import registerImg from '../assets/images/register.png';
 import userIcon from '../assets/images/user.png';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/register.css';
-import { BASE_URL } from '../utils/config';
 import { AuthContext } from '../context/AuthContext.js';
+import apiClient from '../utils/api';
+import { useMutation } from 'react-query';
 
 const Register = () => {
   const [credentials, setCredentials] = useState({
@@ -26,42 +27,36 @@ const Register = () => {
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const mutation = useMutation(
+    (newUser) => apiClient.post('/auth/register', newUser),
+    {
+      onSuccess: () => {
+        dispatch({ type: 'REGISTER_SUCCESS' });
+        alert('Registration successful!');
+        navigate('/login');
+      },
+      onError: () => {
+        alert('Registration failed. Please try again.');
+      },
+    }
+  );
+
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault();
 
     if (credentials.password !== credentials.confirmPassword) {
       return alert('Passwords do not match');
     }
 
-    try {
-      const response = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: credentials.username,
-          email: credentials.email,
-          password: credentials.password,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        dispatch({ type: 'REGISTER_SUCCESS' });
-        alert('Registration successful!');
-        navigate('/login');
-      } else {
-        alert(result.message);
-      }
-    } catch (err) {
-      alert('Registration failed. Please try again.');
-    }
+    mutation.mutate({
+      username: credentials.username,
+      email: credentials.email,
+      password: credentials.password,
+    });
   };
 
   return (
@@ -126,8 +121,9 @@ const Register = () => {
                     color='primary'
                     className='btn secondary__btn auth__btn'
                     type='submit'
+                    disabled={mutation.isLoading}
                   >
-                    Create Account
+                    {mutation.isLoading ? 'Registering...' : 'Create Account'}
                   </Button>
                 </Form>
                 <p>

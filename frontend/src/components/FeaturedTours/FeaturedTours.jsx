@@ -1,19 +1,26 @@
 import React from 'react';
 import TourCard from '../../shared/TourCard';
 import { Col, Spinner } from 'reactstrap';
-import useFetch from '../../hooks/useFetch';
-import { BASE_URL } from 'utils/config';
+import { useQuery } from 'react-query';
+import apiClient from '../../utils/api';
+
+const fetchFeaturedTours = async () => {
+  const {
+    data: { data },
+  } = await apiClient.get('/tours/s/featured');
+  return data;
+};
 
 const FeaturedTours = () => {
   const {
     data: tours,
-    loading,
+    isLoading,
+    isError,
     error,
-  } = useFetch(`${BASE_URL}/tours/s/featured`);
+  } = useQuery('featuredTours', fetchFeaturedTours);
 
-  if (loading) return <Spinner color='primary' />;
-  if (error)
-    return <p className='text-danger'>Failed to load tours: {error}</p>;
+  if (isLoading) return <Spinner color='primary' />;
+  if (isError) return <p className='text-danger'>{error.message}</p>;
 
   return (
     <>

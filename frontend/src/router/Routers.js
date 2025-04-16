@@ -7,6 +7,7 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import SearchResultList from '../shared/SearchResultList';
 import Checkout from '../pages/Checkout';
+import ThankYou from '../pages/ThankYou';
 
 const Routers = () => {
   return (
@@ -19,6 +20,7 @@ const Routers = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/tours/search' element={<SearchResultList />} />
       <Route path='/checkout' element={<Checkout />} />
+      <Route path='/thank-you' element={<ThankYou />} />
     </Routes>
   );
 };

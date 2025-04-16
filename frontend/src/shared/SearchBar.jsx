@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import './search-bar.css';
-import { Container, Col, Form, FormGroup } from 'reactstrap';
+import { Col, Form, FormGroup } from 'reactstrap';
 
 const SearchBar = () => {
   const locationRef = useRef('');

@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  ListGroup,
-  Spinner,
-  Button,
-} from 'reactstrap';
+import { Container, Row, Col, Form, ListGroup, Spinner } from 'reactstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/tour-details.css';
 import avatar from '../assets/images/avatar.jpg';
 import Booking from '../components/Booking/Booking';
-import useFetch from '../hooks/useFetch';
-import { BASE_URL } from '../utils/config';
 import StarRating from '../components/StarRating/StarRating';
+import apiClient from '../utils/api';
+import { useQuery, useMutation } from 'react-query';
+
+const fetchTourDetails = async (id) => {
+  const {
+    data: { data },
+  } = await apiClient.get(`/tours/${id}`);
+  return data;
+};
 
 const TourDetails = () => {
   const { id } = useParams();
+  const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
 
   const navigate = useNavigate();
@@ -32,41 +32,36 @@ const TourDetails = () => {
     bookAt: new Date().toISOString().split('T')[0],
   });
 
-  const { data: tour, loading, error } = useFetch(`${BASE_URL}/tours/${id}`);
+  const {
+    data: tour,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(['tourDetails', id], () => fetchTourDetails(id));
 
-  const submitHandler = async (e) => {
+  const mutation = useMutation(
+    (reviewData) => apiClient.post(`/tours/${id}/reviews`, reviewData, token),
+    {
+      onSuccess: () => {
+        alert('Review submitted successfully!');
+        window.location.reload();
+      },
+      onError: () => {
+        alert('Failed to submit review. Please try again.');
+      },
+    }
+  );
+
+  const submitHandler = (e) => {
     e.preventDefault();
     const reviewText = reviewMsgRef.current.value;
 
-    const reviewData = {
+    mutation.mutate({
       userId: user.id,
       username: user.username,
       rating: tourRating,
       reviewText,
-    };
-
-    try {
-      const token = localStorage.getItem('token'); // Retrieve token from localStorage
-      const response = await fetch(`${BASE_URL}/tours/${id}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-        body: JSON.stringify(reviewData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert('Review submitted successfully!');
-        window.location.reload();
-      } else {
-        alert(result.message);
-      }
-    } catch (err) {
-      alert('Failed to submit review. Please try again.');
-    }
+    });
   };
 
   const handleBookNow = () => {
@@ -82,11 +77,14 @@ const TourDetails = () => {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (tour) {
+      window.scrollTo(0, 0);
+    }
   }, [tour]);
 
-  if (loading) return <Spinner color='primary' />;
-  if (error) return <p className='text-danger'>Failed to load tour: {error}</p>;
+  if (isLoading) return <Spinner color='primary' />;
+  if (isError)
+    return <p className='text-danger'>Failed to load tour: {error.message}</p>;
 
   const {
     photo,

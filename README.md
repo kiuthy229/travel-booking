@@ -74,3 +74,10 @@ The backend is built using Node.js, Express, and MongoDB. It provides RESTful AP
 
 ## License
 This project is licensed under the MIT License.
+
+
+TODO:
+- Dashboard for admin
+- Implement multiple payment methods
+- Forgot password flow
+- Reset token using jwt
