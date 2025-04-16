@@ -1,14 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const bookingSchema = new mongoose.Schema(
+export interface Booking extends Document {
+  tourId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  userEmail?: string;
+  fullName: string;
+  bookingDate: Date;
+  guestSize: number;
+  phone: number;
+  bookAt: Date;
+}
+
+const bookingSchema = new Schema<Booking>(
   {
     tourId: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Tour',
       required: true,
     },
     userId: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
@@ -40,4 +51,4 @@ const bookingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('Booking', bookingSchema);
+export default mongoose.model<Booking>('Booking', bookingSchema);

@@ -1,28 +1,32 @@
+import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import Payment from '../models/Payment.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2025-03-31.basil',
+});
 
-export const processPayment = async (req, res) => {
+export const processPayment = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { userId, bookingId, amount, currency, paymentMethodId } = req.body;
 
   try {
-    // Create a payment intent with automatic payment methods enabled
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to smallest currency unit
+      amount: Math.round(amount * 100),
       currency,
       payment_method: paymentMethodId,
-      confirm: true, // Automatically confirm the payment
+      confirm: true,
       automatic_payment_methods: {
-        enabled: true, // Enable automatic payment methods
-        allow_redirects: 'never', // Disable redirect-based payment methods
+        enabled: true,
+        allow_redirects: 'never',
       },
     });
 
-    // Save payment details in the database
     const newPayment = new Payment({
       userId,
       bookingId,
@@ -34,13 +38,13 @@ export const processPayment = async (req, res) => {
 
     await newPayment.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Payment processed successfully',
       paymentIntent,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    return res.status(500).json({
       success: false,
       message: 'Payment processing failed',
       error: err.message,

@@ -1,8 +1,12 @@
+import { Request, Response } from 'express';
 import Tour from '../models/Tour.js';
 import Review from '../models/Review.js';
 
 // Create a new tour
-export const createTour = async (req, res) => {
+export const createTour = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const newTour = new Tour(req.body);
 
   try {
@@ -20,7 +24,10 @@ export const createTour = async (req, res) => {
 };
 
 // Get all tours with pagination, sorting, and filtering
-export const getAllTours = async (req, res) => {
+export const getAllTours = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const {
     page = 1,
     limit = 10,
@@ -29,7 +36,7 @@ export const getAllTours = async (req, res) => {
     distance,
     maxGroupSize,
     ...filters
-  } = req.query;
+  } = req.query as Record<string, any>;
 
   try {
     if (city) {
@@ -44,22 +51,16 @@ export const getAllTours = async (req, res) => {
       filters.maxGroupSize = { $gte: parseInt(maxGroupSize) };
     }
 
-    // Build query with filters
     const query = Tour.find(filters);
 
-    // Apply sorting if specified
     if (sort) {
       query.sort(sort);
     }
 
-    // Apply pagination
-    const skip = (page - 1) * limit;
-    query.skip(skip).limit(parseInt(limit)).populate('reviews');
+    const skip = (Number(page) - 1) * Number(limit);
+    query.skip(skip).limit(Number(limit)).populate('reviews');
 
-    // Execute query
     const tours = await query;
-
-    // Get total count for pagination metadata
     const total = await Tour.countDocuments(filters);
 
     res.status(200).json({
@@ -68,17 +69,21 @@ export const getAllTours = async (req, res) => {
       data: tours,
       pagination: {
         total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / limit),
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const getFeaturedTours = async (req, res) => {
+// Get featured tours
+export const getFeaturedTours = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const tours = await Tour.find({ featured: true })
       .limit(8)
@@ -89,36 +94,40 @@ export const getFeaturedTours = async (req, res) => {
       message: 'Tours retrieved successfully',
       data: tours,
     });
-  } catch (err) {
+  } catch (err: any) {
     res.status(404).json({ success: false, message: err.message });
   }
 };
 
 // Get a single tour by ID
-export const getTourById = async (req, res) => {
+export const getTourById = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { tourId } = req.params;
 
   try {
     const tour = await Tour.findById(tourId).populate('reviews');
     if (!tour) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Tour not found' });
+      res.status(404).json({ success: false, message: 'Tour not found' });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Tour retrieved successfully',
       data: tour,
     });
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ success: false, message: 'Failed to retrieve tour' });
   }
 };
 
 // Get reviews for a specific tour
-export const getTourReviews = async (req, res) => {
+export const getTourReviews = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { tourId } = req.params;
 
   try {
@@ -128,13 +137,13 @@ export const getTourReviews = async (req, res) => {
         .status(404)
         .json({ success: false, message: 'Tour not found' });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Reviews retrieved successfully',
       data: tour.reviews,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve reviews',
       error: err.message,
@@ -143,7 +152,10 @@ export const getTourReviews = async (req, res) => {
 };
 
 // Update a tour
-export const updateTour = async (req, res) => {
+export const updateTour = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { tourId } = req.params;
 
   try {
@@ -155,18 +167,23 @@ export const updateTour = async (req, res) => {
         .status(404)
         .json({ success: false, message: 'Tour not found' });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Tour updated successfully',
       data: updatedTour,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to update tour' });
+    return res
+      .status(500)
+      .json({ success: false, message: 'Failed to update tour' });
   }
 };
 
 // Delete a tour
-export const deleteTour = async (req, res) => {
+export const deleteTour = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { tourId } = req.params;
 
   try {
@@ -176,20 +193,24 @@ export const deleteTour = async (req, res) => {
         .status(404)
         .json({ success: false, message: 'Tour not found' });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Tour deleted successfully',
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to delete tour' });
+    return res
+      .status(500)
+      .json({ success: false, message: 'Failed to delete tour' });
   }
 };
 
 // Create a review for a tour
-export const createReview = async (req, res) => {
+export const createReview = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
   const { tourId } = req.params;
   const newReview = new Review({ productId: tourId, ...req.body });
-  const { username, reviewText, rating } = req.body;
 
   try {
     const savedReview = await newReview.save();
@@ -198,24 +219,25 @@ export const createReview = async (req, res) => {
       $push: { review: savedReview._id },
     });
 
-    // Update the tour's average rating
-    const tour = await Tour.findById(tourId);
-    const totalReviews = tour.reviews.length + 1;
-    const totalRating =
-      tour.reviews.reduce((sum, review) => sum + review.rating, 0) + rating;
-    tour.averageRating = totalRating / totalReviews;
+    const tour = await Tour.findById(tourId).populate('reviews');
+    if (!tour) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Tour not found' });
+    }
+
     tour.reviews.push(newReview._id);
 
     await newReview.save();
     await tour.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Review added successfully',
       data: savedReview,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    return res.status(500).json({
       success: false,
       message: 'Failed to add review',
       error: err.message,
