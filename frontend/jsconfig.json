@@ -1,14 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
-    "paths": {
-      "components/*": ["components/*"],
-      "shared/*": ["shared/*"],
-      "utils/*": ["utils/*"],
-      "hooks/*": ["hooks/*"],
-      "pages/*": ["pages/*"],
-      "context/*": ["context/*"]
-    },
     "jsx": "react"
   },
   "include": ["src/**/*"]
